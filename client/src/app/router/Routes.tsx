@@ -1,4 +1,4 @@
-import { Navigate, createBrowserRouter } from "react-router-dom";
+import {  createBrowserRouter } from "react-router-dom";
 import App from "../layout/App";
 import DriverPage from "../features/Driver/DriverPage";
 import CustomerPage from "../features/Customer/CustomerPage";
