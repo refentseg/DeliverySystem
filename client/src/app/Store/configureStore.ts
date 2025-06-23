@@ -1,9 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { type TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import { jobSlice } from "../features/Job/JobSlice";
 
 export const store = configureStore({
     reducer: {
-        
+        jobs:jobSlice.reducer
     }
 });
 
