@@ -7,6 +7,7 @@ class Job(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('assigned', 'Assigned'),
+        ('loading_cargo', 'Loading Cargo'),
         ('in_progress', 'In Progress'),
         ('delivered', 'Delivered'),
         ('cancelled', 'Cancelled'),

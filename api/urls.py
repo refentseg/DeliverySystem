@@ -2,8 +2,10 @@
 from django.urls import path
 
 from .views import (
-    CumstomerDetailView, CustomersView,
-    DriverDetailView, DriversView, JobDetailView, JobsView
+    CumstomerDetailView, CustomersView, DailyDeliveriesView,
+    DashboardMetricsView, DeliveryStatsView,
+    DriverDetailView, DriversView, JobDetailView, JobsView, RecentActivityView,
+    WeeklyTrendView
 )
 
 app_name = 'webapp'
@@ -16,5 +18,26 @@ urlpatterns = [
          name='customer_detail'),
 
     path('driver/', DriversView.as_view(), name='drivers'),
-    path('driver/<int:pk>/', DriverDetailView.as_view(), name='driver_detail')
+    path('driver/<int:pk>/', DriverDetailView.as_view(), name='driver_detail'),
+
+    # Main dashboard metrics (Total, Completed, Pending, Daily Average)
+    path('dashboard/metrics/', DashboardMetricsView.as_view(),
+         name='dashboard-metrics'),
+
+    # Daily deliveries chart data
+    path('dashboard/daily-deliveries/', DailyDeliveriesView.as_view(),
+         name='daily-deliveries'),
+
+    # Weekly trend chart data
+    path('dashboard/weekly-trend/', WeeklyTrendView.as_view(),
+         name='weekly-trend'),
+
+    # Recent activity feed
+    path('dashboard/recent-activity/', RecentActivityView.as_view(),
+         name='recent-activity'),
+
+    # Comprehensive stats
+    path('dashboard/stats/', DeliveryStatsView.as_view(),
+         name='delivery-stats'),
+
 ]
