@@ -62,6 +62,19 @@ function createFormData(item:any) {
     return formData;
 }
 
+const Dashboard = {
+    getMetrics: () => request.get('/dashboard/metrics'),
+    
+    getDailyDeliveries: () => request.get('/dashboard/daily-deliveries'),
+    
+    getWeeklyTrend: () => request.get('/dashboard/weekly-trend'),
+    
+    getRecentActivity: () => request.get('/dashboard/recent-activity'),
+    
+    getStats: () => request.get('/dashboard/stats'),
+    
+}
+
 
 const Job = {
     list: (params?: any) => request.get('/job', params),
@@ -71,8 +84,10 @@ const Job = {
     deleteJob: (id: number) => request.delete(`/job/${id}`),    
 }
 
+
 const agent = {
-    Job
+    Job,
+    Dashboard
 }
 
 export default agent;

@@ -288,25 +288,45 @@ class WeeklyTrendView(APIView):
 
 class RecentActivityView(APIView):
     """
-    Get recent delivery activities (latest completed deliveries)
+    Get recent delivery activities (all job statuses, latest first)
     """
     def get(self, request):
-        # Get last 10 completed deliveries
-        recent_jobs = Job.objects.filter(
-            status='delivered'
-        ).order_by('-delivery_time')[:10]
+        # Get last 10 jobs with all statuses, ordered by latest activity
+        recent_jobs = Job.objects.select_related(
+            'customer').order_by('-created_at')[:10]
+
+        # Status display mapping
+        status_messages = {
+            'pending': 'Job created and waiting for assignment',
+            'assigned': 'Driver assigned to job',
+            'loading_cargo': 'Loading cargo in progress',
+            'in_progress': 'Delivery in progress',
+            'delivered': 'Completed successfully',
+            'cancelled': 'Job cancelled'
+        }
 
         activities = []
         for job in recent_jobs:
+            # Use delivery_time if delivered, otherwise use created_at for
+            # timestamp
+            if job.status == 'delivered' and job.delivery_time:
+                activity_time = job.delivery_time
+            else:
+                activity_time = job.created_at
+
             activities.append({
                 'id': f"D{job.created_at.strftime('%Y')}-{job.id:04d}",
-                'status': 'Completed',
-                'message': 'Completed successfully',
+                'status': job.get_status_display(),  # Gets status
+                'status_code': job.status,  # Raw status for logic
+                'message': status_messages.get(job.status, 'Status updated'),
                 'customer': job.customer.name if hasattr(
                     job.customer, 'name') else f"Customer {job.customer.id}",
-                'delivery_time': job.delivery_time.isoformat()
-                if job.delivery_time else None,
-                'destination': job.destination
+                'driver': job.driver.name if job.driver and hasattr(
+                    job.driver, 'name') else None,
+                'activity_time': activity_time.isoformat(),
+                'destination': job.destination,
+                'priority': job.get_priority_display(),
+                'priority_code': job.priority
             })
 
         return Response(activities)

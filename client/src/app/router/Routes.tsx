@@ -5,7 +5,7 @@ import CustomerPage from "../features/Customer/CustomerPage";
 import JobPage from "../features/Job/JobPage";
 
 export const router = createBrowserRouter([
-    {path: "/",
+    {path: '/',
         element: <App />,
         children:[
             {path: 'deliveries', element: < JobPage/>},

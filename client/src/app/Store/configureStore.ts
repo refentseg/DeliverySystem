@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { type TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { jobSlice } from "../features/Job/JobSlice";
+import dashboardSlice from "../features/Home/DashboardSlice";
 
 export const store = configureStore({
     reducer: {
-        jobs:jobSlice.reducer
+        jobs:jobSlice.reducer,
+        dashboard: dashboardSlice.reducer,
     }
 });
 
