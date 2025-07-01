@@ -11,23 +11,23 @@ import {
     SidebarMenuItem,
     SidebarRail,
     useSidebar } from "../components/ui/sidebar"
+import { useLocation} from "react-router-dom";
 
-const items = [
+const initialItems = [
   {
     title: "Home",
     url: "/",
-    icon: Home,
-    isActive: true,
+    icon: Home
   },
   {
     title: "Deliveries",
     url: "/deliveries",
-    icon: Package,
+    icon: Package
   },
   {
     title: "Drivers",
     url: "/drivers",
-    icon: Truck,
+    icon: Truck
   },
   {
     title: "Customers",
@@ -39,6 +39,14 @@ const items = [
 
 export default function AppSideBar() {
   const { isMobile } = useSidebar()
+
+  const location = useLocation();
+
+  // Create items with dynamic isActive property
+  const items = initialItems.map(item => ({
+    ...item,
+    isActive: item.url === location.pathname
+  }));
 
   return (
     <Sidebar collapsible={isMobile ? "offcanvas" : "icon"}>
@@ -58,7 +66,7 @@ export default function AppSideBar() {
                   <SidebarMenuButton
                     asChild
                     isActive={item.isActive}
-                    tooltip={item.title} // Add tooltips for collapsed state
+                    tooltip={item.title}
                   >
                     <a href={item.url}>
                       <item.icon className="h-4 w-4" />
