@@ -6,7 +6,8 @@ import type { Job } from "@/app/models/job"
 import { ArrowRight, CheckCircle, Edit, EllipsisVertical, Trash2, Truck } from "lucide-react"
 
 interface Props {
-  jobs: Job[]
+  jobs: Job[];
+  onSelectJob: (job: Job) => void;
 }
 
 const getStatusBadge = (status: string) => {
@@ -46,7 +47,7 @@ const getStatusBadge = (status: string) => {
   }
 }
 
-export default function JobList({jobs}:Props) {
+export default function JobList({jobs, onSelectJob}:Props) {
   return (
       <div className="w-full">
       {/* Mobile Card View - shown on small screens */}
@@ -98,7 +99,7 @@ export default function JobList({jobs}:Props) {
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem 
-                      onClick={() => console.log(`Edit ${delivery.id}`)}
+                      onClick={() => onSelectJob(delivery)}
                       className="flex items-center gap-2"
                     >
                       <Edit className="w-4 h-4" />
@@ -271,7 +272,7 @@ export default function JobList({jobs}:Props) {
                             Mark as Delivered
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => console.log(`Edit ${delivery.id}`)}>Edit</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => onSelectJob(delivery)}>Edit</DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => console.log(`Delete ${delivery.id}`)}
                             className="text-red-600"

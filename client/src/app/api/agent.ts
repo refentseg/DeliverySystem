@@ -79,15 +79,25 @@ const Dashboard = {
 const Job = {
     list: (params?: any) => request.get('/job', params),
     details: (id: number) => request.get(`/job/${id}`),
-    createJob: (job: any) => request.postForm('/job', createFormData(job)),
+    createJob: (job: any) => request.postForm('/job/', createFormData(job)),
     updateJob: (job: any) => request.putForm(`/job/${job.id}`, createFormData(job)),
     deleteJob: (id: number) => request.delete(`/job/${id}`),    
+}
+const Customer ={
+    list: (params?: any) => request.get('/customer', params),
+    details: (id: number) => request.get(`/customer/${id}`),
+}
+const Driver = {
+    list: (params?: any) => request.get('/driver', params),
+    details: (id: number) => request.get(`/driver/${id}`),
 }
 
 
 const agent = {
+    Dashboard,
     Job,
-    Dashboard
+    Driver,
+    Customer
 }
 
 export default agent;

@@ -1,30 +1,42 @@
 import { Button } from "@/app/components/ui/button";
 import { Plus } from "lucide-react";
 import JobList from "./JobList";
-import { use, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/Store/configureStore";
-import { fetchJobsAsync, jobSelectors } from "./JobSlice";
+import UseJobs from "@/app/hooks/UseJobs";
+import { useState } from "react";
+import JobForm from "./JobForm";
+import type { Job } from "@/app/models/job";
 
 export default function JobPage(){
   // set jobs
-  const jobs = useAppSelector(jobSelectors.selectAll);
-  const { jobsloaded } = useAppSelector((state) => state.jobs);
-  const dispatch = useAppDispatch();
+  const {jobs} = UseJobs();
+  const dispatch = useAppDispatch(); //Future use for pagination maybe??
+  const [editMode,setEditMode] = useState(false);
+  const [selectedJob,setSelectedJob] = useState<Job | undefined>(undefined);
 
-  //
-  useEffect(() => {
-    if (!jobsloaded) dispatch(fetchJobsAsync());
-  }, [jobsloaded, dispatch]);
+  // Cancels the edit mode and resets the selected job
+  function cancelEdit(){
+        if(selectedJob) setSelectedJob(undefined);
+        setEditMode(false);
+  }
+
+  function handleSelectJob(job:Job){
+    setSelectedJob(job)
+    setEditMode(true);
+  }
+
+  //Checks if we are in edit mode
+  if(editMode)return <JobForm job={selectedJob} cancelEdit={cancelEdit} />
     return(
     <div className="container flex flex-col gap-4 p-4">
         <div className="flex items-center justify-between mb-6">
         <div></div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
+        <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setEditMode(true)}>
           <Plus className="mr-2 h-4 w-4" />
           Add Job
         </Button>
       </div>
-      <JobList jobs={jobs}/>
+      <JobList jobs={jobs} onSelectJob={handleSelectJob}/>
     </div>
     )
 }

@@ -4,7 +4,7 @@ import type { RootState } from "@/app/Store/configureStore";
 import { createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 
 interface JobState{
-    jobsloaded: boolean;
+    jobsLoaded: boolean;
     status: string;
 }
 
@@ -40,17 +40,17 @@ export const fetchJobAsync = createAsyncThunk<Job, number>(
 export const jobSlice = createSlice({
     name: 'job',
     initialState: jobsAdapter.getInitialState<JobState>({
-        jobsloaded: false,
+        jobsLoaded: false,
         status: 'idle'
     }),
     reducers:{
         setJob: (state, action) => {
             jobsAdapter.setOne(state, action.payload);
-            state.jobsloaded = false;
+            state.jobsLoaded = false;
         },
         removeJob: (state, action) => {
             jobsAdapter.removeOne(state, action.payload);
-            state.jobsloaded = false;
+            state.jobsLoaded = false;
         }
     },
     extraReducers: (builder) => {
@@ -60,7 +60,7 @@ export const jobSlice = createSlice({
         .addCase(fetchJobsAsync.fulfilled, (state, action) => {
             jobsAdapter.setAll(state, action.payload);
             state.status = 'idle';
-            state.jobsloaded = true;
+            state.jobsLoaded = true;
         })
         .addCase(fetchJobsAsync.rejected, (state, action) => {
             console.error(action.payload);

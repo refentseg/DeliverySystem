@@ -1,3 +1,4 @@
+import agent from "@/app/api/agent"
 import { Button } from "@/app/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/card"
 import { Checkbox } from "@/app/components/ui/checkbox"
@@ -6,74 +7,78 @@ import { Input } from "@/app/components/ui/input"
 import { Label } from "@/app/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select"
-import { cn } from "@/app/lib/utils"
+import { cn, formatForDateTimeLocal, getTodayAt18 } from "@/app/lib/utils"
+import type { Job } from "@/app/models/job"
+import { useAppDispatch } from "@/app/Store/configureStore"
 import { Check, ChevronsUpDown } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useForm, type FieldValues } from "react-hook-form";
+import { setJob } from "./JobSlice"
+import UseJobs from "@/app/hooks/UseJobs"
 
-const existingCustomers = [
-  { id: 1, name: "John Doe", email: "john@example.com", phone: "+27 123 456 789" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", phone: "+27 987 654 321" },
-  { id: 3, name: "Mike Johnson", email: "mike@example.com", phone: "+27 555 123 456" },
-]
+interface Props{
+    job?:Job;
+    cancelEdit:() => void;
+}
 
-const drivers = [
-  { id: 1, name: "David Wilson", license: "DL001" },
-  { id: 2, name: "Sarah Brown", license: "DL002" },
-  { id: 3, name: "Tom Anderson", license: "DL003" },
-]
-
-export default function DeliveryForm() {
+export default function DeliveryForm({job, cancelEdit}: Props) {
   const [isExistingCustomer, setIsExistingCustomer] = useState(false)
   const [selectedCustomer, setSelectedCustomer] = useState<number | null>(null)
   const [selectedDriver, setSelectedDriver] = useState<number | null>(null)
   const [customerOpen, setCustomerOpen] = useState(false)
   const [driverOpen, setDriverOpen] = useState(false)
 
-  const [formData, setFormData] = useState({
-    delivery_from: "Mooiplaas",
-    destination: "Midrand",
-    status: "pending",
-    priority: "medium",
-    scheduled_time: "2025-06-06T18:00",
-    customer_name: "",
-    customer_email: "",
-    customer_phone: "",
+  const { control,register, reset, handleSubmit, formState:{isDirty,isSubmitting} } = useForm({
+    defaultValues:{
+      delivery_from: job?.delivery_from || "Mooiplaas",
+      destination: job?.destination || "Midrand",
+      status: job?.status || "pending",
+      priority: job?.priority || "medium",
+      scheduled_time: job?.scheduled_time
+    ? formatForDateTimeLocal(job.scheduled_time)
+    : getTodayAt18() ,
+      customer_name: job?.customer?.name || "",
+      customer_email: job?.customer?.email || "",
+      customer_phone: job?.customer?.phone || "",
+    }
+   });
+   const dispatch = useAppDispatch();
+
+   const {drivers, customers} = UseJobs();
+
+  useEffect(()=>{
+    if(job && isDirty) reset(job)
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const deliveryData = {
-      delivery_from: formData.delivery_from,
-      destination: formData.destination,
-      status: formData.status,
-      priority: formData.priority,
-      scheduled_time: new Date(formData.scheduled_time).toISOString(),
-      customer_id: isExistingCustomer ? selectedCustomer : null,
-      driver_id: selectedDriver,
-      ...(isExistingCustomer
-        ? {}
-        : {
-            customer_name: formData.customer_name,
-            customer_email: formData.customer_email,
-            customer_phone: formData.customer_phone,
-          }),
+  async function handleSubmitData(data:any) {
+   try{
+    const submissionData = {
+        ...data,
+        ...(job && { id: job.id }),
+        customer_id: isExistingCustomer ? selectedCustomer : null,
+        driver_id: selectedDriver,
+      };
+    let response : Job;
+    if(job){
+      response = await agent.Job.updateJob(submissionData);
+    }else{
+      response = await agent.Job.createJob(submissionData);
+      console.log(response)
     }
-
-    console.log("Delivery Data:", deliveryData)
+    dispatch(setJob(response));
+    cancelEdit();
+   }catch(error){
+     console.log("Error creating/edit delivery order:", error)
+   }
   }
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
-
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full max-w-2xl mx-auto mt-5 mb-5">
       <CardHeader>
         <CardTitle>Create Delivery Order</CardTitle>
         <CardDescription>Fill in the details for the new delivery order</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(handleSubmitData)} className="space-y-6">
           {/* Customer Section */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
@@ -102,7 +107,7 @@ export default function DeliveryForm() {
                       className="w-full justify-between"
                     >
                       {selectedCustomer
-                        ? existingCustomers.find((customer) => customer.id === selectedCustomer)?.name
+                        ? customers.find((customer) => customer.id === selectedCustomer)?.name
                         : "Select customer..."}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -113,7 +118,7 @@ export default function DeliveryForm() {
                       <CommandList>
                         <CommandEmpty>No customer found.</CommandEmpty>
                         <CommandGroup>
-                          {existingCustomers.map((customer) => (
+                          {customers.map((customer) => (
                             <CommandItem
                               key={customer.id}
                               value={customer.name}
@@ -146,8 +151,7 @@ export default function DeliveryForm() {
                   <Label htmlFor="customer-name">Customer Name</Label>
                   <Input
                     id="customer-name"
-                    value={formData.customer_name}
-                    onChange={(e) => handleInputChange("customer_name", e.target.value)}
+                    
                     placeholder="Enter customer name"
                     required
                   />
@@ -157,18 +161,15 @@ export default function DeliveryForm() {
                   <Input
                     id="customer-email"
                     type="email"
-                    value={formData.customer_email}
-                    onChange={(e) => handleInputChange("customer_email", e.target.value)}
                     placeholder="Enter email address"
-                    required
+                    {...register("customer_name", { required: "Customer name is required" })}
                   />
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="customer-phone">Phone</Label>
                   <Input
                     id="customer-phone"
-                    value={formData.customer_phone}
-                    onChange={(e) => handleInputChange("customer_phone", e.target.value)}
+                    {...register("customer_phone", { required: "Customer phone is required" })}
                     placeholder="Enter phone number"
                     required
                   />
@@ -207,7 +208,6 @@ export default function DeliveryForm() {
                           />
                           <div>
                             <div className="font-medium">{driver.name}</div>
-                            <div className="text-sm text-muted-foreground">License: {driver.license}</div>
                           </div>
                         </CommandItem>
                       ))}
@@ -224,8 +224,7 @@ export default function DeliveryForm() {
               <Label htmlFor="delivery-from">Delivery From</Label>
               <Input
                 id="delivery-from"
-                value={formData.delivery_from}
-                onChange={(e) => handleInputChange("delivery_from", e.target.value)}
+                {...register("delivery_from", { required: "Delivery From is required" })}
                 placeholder="Enter pickup location"
                 required
               />
@@ -234,8 +233,7 @@ export default function DeliveryForm() {
               <Label htmlFor="destination">Destination</Label>
               <Input
                 id="destination"
-                value={formData.destination}
-                onChange={(e) => handleInputChange("destination", e.target.value)}
+                {...register("destination", { required: "Destination is required" })}
                 placeholder="Enter destination"
                 required
               />
@@ -245,7 +243,7 @@ export default function DeliveryForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
-              <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
+              <Select {...register("status", { required: "Status name is required" })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
@@ -260,7 +258,7 @@ export default function DeliveryForm() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="priority">Priority</Label>
-              <Select value={formData.priority} onValueChange={(value) => handleInputChange("priority", value)}>
+              <Select {...register("priority", { required: "Priority required" })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
@@ -279,14 +277,15 @@ export default function DeliveryForm() {
             <Input
               id="scheduled-time"
               type="datetime-local"
-              value={formData.scheduled_time}
-              onChange={(e) => handleInputChange("scheduled_time", e.target.value)}
+              {...register("scheduled_time", { required: "Scheduled Time is required" })}
               required
             />
           </div>
-
-          <Button type="submit" className="w-full">
-            Create Delivery Order
+          <Button type="button" variant="outline" onClick={cancelEdit} className="w-full">
+            Cancel
+          </Button>
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {job ? "Edit Delivery Order":"Create Delivery Order"}
           </Button>
         </form>
       </CardContent>
