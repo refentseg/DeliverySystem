@@ -169,7 +169,7 @@ export default function DeliveryForm({job, cancelEdit}: Props) {
                   <Label htmlFor="customer-phone">Phone</Label>
                   <Input
                     id="customer-phone"
-                    {...register("customer_phone", { required: "Customer phone is required" })}
+                    {...register("customer_phone", { required: "Phone number is required" })}
                     placeholder="Enter phone number"
                     required
                   />
