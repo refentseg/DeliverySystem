@@ -8,6 +8,7 @@ import { ArrowRight, CheckCircle, Edit, EllipsisVertical, Trash2, Truck } from "
 interface Props {
   jobs: Job[];
   onSelectJob: (job: Job) => void;
+  onDeleteJob: (id: number) => void;
 }
 
 const getStatusBadge = (status: string) => {
@@ -47,7 +48,7 @@ const getStatusBadge = (status: string) => {
   }
 }
 
-export default function JobList({jobs, onSelectJob}:Props) {
+export default function JobList({jobs, onSelectJob, onDeleteJob}:Props) {
   return (
       <div className="w-full">
       {/* Mobile Card View - shown on small screens */}
@@ -106,7 +107,7 @@ export default function JobList({jobs, onSelectJob}:Props) {
                       Edit
                     </DropdownMenuItem>
                     <DropdownMenuItem 
-                      onClick={() => console.log(`Delete ${delivery.id}`)} 
+                      onClick={() => onDeleteJob(delivery.id)} 
                       className="text-red-600 hover:text-red-700 hover:bg-red-50 flex items-center gap-2"
                     >
                       <Trash2 className="w-4 h-4" />

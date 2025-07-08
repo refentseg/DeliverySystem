@@ -6,6 +6,8 @@ import UseJobs from "@/app/hooks/UseJobs";
 import { useState } from "react";
 import JobForm from "./JobForm";
 import type { Job } from "@/app/models/job";
+import { removeJob } from "./JobSlice";
+import agent from "@/app/api/agent";
 
 export default function JobPage(){
   // set jobs
@@ -13,6 +15,7 @@ export default function JobPage(){
   const dispatch = useAppDispatch(); //Future use for pagination maybe??
   const [editMode,setEditMode] = useState(false);
   const [selectedJob,setSelectedJob] = useState<Job | undefined>(undefined);
+  const [target,setTarget] = useState(0);
 
   // Cancels the edit mode and resets the selected job
   function cancelEdit(){
@@ -25,6 +28,13 @@ export default function JobPage(){
     setEditMode(true);
   }
 
+  function handleDeleteProduct(id:number){
+        setTarget(id)
+        agent.Job.deleteJob(id)
+        .then(()=>dispatch(removeJob(id)))
+        .catch(error =>console.log(error))
+    }
+
   //Checks if we are in edit mode
   if(editMode)return <JobForm job={selectedJob} cancelEdit={cancelEdit} />
     return(
@@ -36,7 +46,9 @@ export default function JobPage(){
           Add Job
         </Button>
       </div>
-      <JobList jobs={jobs} onSelectJob={handleSelectJob}/>
+      <JobList jobs={jobs} 
+                onSelectJob={handleSelectJob} 
+                onDeleteJob={handleDeleteProduct}/>
     </div>
     )
 }
