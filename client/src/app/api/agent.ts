@@ -86,6 +86,9 @@ const Job = {
 const Customer ={
     list: (params?: any) => request.get('/customer', params),
     details: (id: number) => request.get(`/customer/${id}`),
+    createCustomer: (customer: any) => request.postForm('/customer/', createFormData(customer)),
+    updateCustomer: (customer: any) => request.putForm(`/customer/${customer.id}`, createFormData(customer)),
+    deleteCustomer: (id: number) => request.delete(`/customer/${id}`),
 }
 const Driver = {
     list: (params?: any) => request.get('/driver', params),

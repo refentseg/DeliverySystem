@@ -1,6 +1,5 @@
 import { ToastContainer } from 'react-toastify'
 import './App.css'
-import JobList from '../features/Job/JobList'
 import AppSidebar from './AppSidebar'
 import { SidebarInset, SidebarProvider, useSidebar } from '../components/ui/sidebar'
 import TopBar from './TopBar'

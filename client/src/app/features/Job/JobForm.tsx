@@ -52,10 +52,27 @@ export default function DeliveryForm({job, cancelEdit}: Props) {
 
   async function handleSubmitData(data:any) {
    try{
+    let customerId:number |null = null;
+    // Check if an existing customer is selected
+    if(isExistingCustomer){
+      customerId = selectedCustomer;
+      // If customer does not exist, create a new customer
+    }else if(data.customer_name && data.customer_email && data.customer_phone){
+      const newCustomerData = {
+        name: data.customer_name,
+        email: data.customer_email,
+        phone: data.customer_phone,
+      };
+      console.log('Creating customer with data:', newCustomerData);
+      const newCustomer = await agent.Customer.createCustomer(newCustomerData);
+      customerId = newCustomer.id;
+      console.log("New customer created:", newCustomer);
+    }
+
     const submissionData = {
         ...data,
         ...(job && { id: job.id }),
-        customer_id: isExistingCustomer ? selectedCustomer : null,
+        customer_id: customerId,
         driver_id: selectedDriver,
       };
     let response : Job;
@@ -151,9 +168,8 @@ export default function DeliveryForm({job, cancelEdit}: Props) {
                   <Label htmlFor="customer-name">Customer Name</Label>
                   <Input
                     id="customer-name"
-                    
+                    {...register("customer_name", { required: "Customer name is required" })}
                     placeholder="Enter customer name"
-                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -162,13 +178,16 @@ export default function DeliveryForm({job, cancelEdit}: Props) {
                     id="customer-email"
                     type="email"
                     placeholder="Enter email address"
-                    {...register("customer_name", { required: "Customer name is required" })}
+                    {...register("customer_email", { required: "Customer email is required" })}
                   />
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="customer-phone">Phone</Label>
                   <Input
                     id="customer-phone"
+                    type="tel"
+                    pattern="[0-9]{10}"
+                    max={10}
                     {...register("customer_phone", { required: "Phone number is required" })}
                     placeholder="Enter phone number"
                     required
