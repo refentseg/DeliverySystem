@@ -9,6 +9,7 @@ interface Props {
   jobs: Job[];
   onSelectJob: (job: Job) => void;
   onDeleteJob: (id: number) => void;
+  onMarkAsDelivered: (id: number) => void;
 }
 
 const getStatusBadge = (status: string) => {
@@ -48,7 +49,7 @@ const getStatusBadge = (status: string) => {
   }
 }
 
-export default function JobList({jobs, onSelectJob, onDeleteJob}:Props) {
+export default function JobList({jobs, onSelectJob, onDeleteJob, onMarkAsDelivered}:Props) {
   return (
       <div className="w-full">
       {/* Mobile Card View - shown on small screens */}
@@ -91,7 +92,7 @@ export default function JobList({jobs, onSelectJob, onDeleteJob}:Props) {
                   <DropdownMenuContent align="end" className="w-48">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuItem
-                      onClick={() => console.log(`Mark ${delivery.id} as complete`)}
+                      onClick={() => onMarkAsDelivered(delivery.id)}
                       disabled={delivery.status === "delivered" || delivery.status === "cancelled"}
                       className="flex items-center gap-2"
                     >
@@ -267,7 +268,7 @@ export default function JobList({jobs, onSelectJob, onDeleteJob}:Props) {
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuItem
-                            onClick={() => console.log(`Mark ${delivery.id} as complete`)}
+                            onClick={() => onMarkAsDelivered(delivery.id)}
                             disabled={delivery.status === "delivered" || delivery.status === "cancelled"}
                           >
                             Mark as Delivered

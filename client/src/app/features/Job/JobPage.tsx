@@ -35,6 +35,14 @@ export default function JobPage(){
         .catch(error =>console.log(error))
     }
 
+  // Function to mark a job as delivered
+  function handleMarkAsDelivered(id:number){  
+    agent.Job.updateStatus(id, "delivered")
+      .then(() => {
+        console.log(`Job ${id} marked as delivered`);
+      })
+      .catch(error => console.log(error));
+  }
   //Checks if we are in edit mode
   if(editMode)return <JobForm job={selectedJob} cancelEdit={cancelEdit} />
     return(
@@ -48,7 +56,8 @@ export default function JobPage(){
       </div>
       <JobList jobs={jobs} 
                 onSelectJob={handleSelectJob} 
-                onDeleteJob={handleDeleteProduct}/>
+                onDeleteJob={handleDeleteProduct}
+                onMarkAsDelivered={handleMarkAsDelivered}/>
     </div>
     )
 }

@@ -12,7 +12,7 @@ import type { Job } from "@/app/models/job"
 import { useAppDispatch } from "@/app/Store/configureStore"
 import { Check, ChevronsUpDown } from "lucide-react"
 import { useEffect, useState } from "react"
-import { useForm, type FieldValues } from "react-hook-form";
+import { Controller, useForm, type FieldValues } from "react-hook-form";
 import { setJob } from "./JobSlice"
 import UseJobs from "@/app/hooks/UseJobs"
 
@@ -48,7 +48,7 @@ export default function DeliveryForm({job, cancelEdit}: Props) {
 
   useEffect(()=>{
     if(job && isDirty) reset(job)
-  })
+  },[job])
 
   async function handleSubmitData(data:any) {
    try{
@@ -240,54 +240,49 @@ export default function DeliveryForm({job, cancelEdit}: Props) {
           {/* Delivery Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="delivery-from">Delivery From</Label>
-              <Input
-                id="delivery-from"
-                {...register("delivery_from", { required: "Delivery From is required" })}
-                placeholder="Enter pickup location"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="destination">Destination</Label>
-              <Input
-                id="destination"
-                {...register("destination", { required: "Destination is required" })}
-                placeholder="Enter destination"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
-              <Select {...register("status", { required: "Status name is required" })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="confirmed">Confirmed</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
+              <Controller
+                name="status"
+                control={control}
+                rules={{ required: "Status name is required" }}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="assigned">Assigned</SelectItem>
+                      <SelectItem value="loading_cargo">Loading Cargo</SelectItem>
+                      <SelectItem value="in_progress">In Progress</SelectItem>
+                      <SelectItem value="delivered">Delivered</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
+            
             <div className="space-y-2">
               <Label htmlFor="priority">Priority</Label>
-              <Select {...register("priority", { required: "Priority required" })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
-                  <SelectItem value="urgent">Urgent</SelectItem>
-                </SelectContent>
-              </Select>
+              <Controller
+                name="priority"
+                control={control}
+                rules={{ required: "Priority required" }}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Low</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="urgent">Urgent</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
           </div>
 

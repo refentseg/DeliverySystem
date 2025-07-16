@@ -45,6 +45,7 @@ const request = {
     get:(url:string, params?: any) => axios.get(url, { params }).then(responseBody),
     post:(url:string,body:object)=>axios.post(url,body).then(responseBody),
     put:(url:string,body:object)=>axios.put(url,body).then(responseBody),
+    patch:(url:string,body:object)=>axios.patch(url,body).then(responseBody),
     delete:(url:string)=>axios.delete(url).then(responseBody),
     postForm:(url:string,data:FormData) => axios.post(url,data,{
         headers:{'Content-type':'multipart/form-data'}
@@ -80,15 +81,16 @@ const Job = {
     list: (params?: any) => request.get('/job', params),
     details: (id: number) => request.get(`/job/${id}`),
     createJob: (job: any) => request.postForm('/job/', createFormData(job)),
-    updateJob: (job: any) => request.putForm(`/job/${job.id}`, createFormData(job)),
-    deleteJob: (id: number) => request.delete(`/job/${id}`),    
+    updateJob: (job: any) => request.putForm(`/job/${job.id}/`, createFormData(job)),
+    updateStatus: (id: number, status: string) => request.patch(`/job/${id}/`, { status }),
+    deleteJob: (id: number) => request.delete(`/job/${id}/`),    
 }
 const Customer ={
     list: (params?: any) => request.get('/customer', params),
     details: (id: number) => request.get(`/customer/${id}`),
     createCustomer: (customer: any) => request.postForm('/customer/', createFormData(customer)),
-    updateCustomer: (customer: any) => request.putForm(`/customer/${customer.id}`, createFormData(customer)),
-    deleteCustomer: (id: number) => request.delete(`/customer/${id}`),
+    updateCustomer: (customer: any) => request.putForm(`/customer/${customer.id}/`, createFormData(customer)),
+    deleteCustomer: (id: number) => request.delete(`/customer/${id}/`),
 }
 const Driver = {
     list: (params?: any) => request.get('/driver', params),
