@@ -85,6 +85,8 @@ const Job = {
     updateStatus: (id: number, status: string) => request.patch(`/job/${id}/`, { status }),
     deleteJob: (id: number) => request.delete(`/job/${id}/`),    
 }
+
+
 const Customer ={
     list: (params?: any) => request.get('/customer', params),
     details: (id: number) => request.get(`/customer/${id}`),
@@ -92,6 +94,8 @@ const Customer ={
     updateCustomer: (customer: any) => request.putForm(`/customer/${customer.id}/`, createFormData(customer)),
     deleteCustomer: (id: number) => request.delete(`/customer/${id}/`),
 }
+
+
 const Driver = {
     list: (params?: any) => request.get('/driver', params),
     details: (id: number) => request.get(`/driver/${id}`),

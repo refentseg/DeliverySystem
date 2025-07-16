@@ -22,9 +22,9 @@ interface Props{
 }
 
 export default function DeliveryForm({job, cancelEdit}: Props) {
-  const [isExistingCustomer, setIsExistingCustomer] = useState(false)
-  const [selectedCustomer, setSelectedCustomer] = useState<number | null>(null)
-  const [selectedDriver, setSelectedDriver] = useState<number | null>(null)
+  const [isExistingCustomer, setIsExistingCustomer] = useState(job?.customer?.id ? true : false)
+  const [selectedCustomer, setSelectedCustomer] = useState<number | null>(job?.customer?.id || null)
+  const [selectedDriver, setSelectedDriver] = useState<number | null>(job?.driver?.id || null)
   const [customerOpen, setCustomerOpen] = useState(false)
   const [driverOpen, setDriverOpen] = useState(false)
 
@@ -104,7 +104,14 @@ export default function DeliveryForm({job, cancelEdit}: Props) {
                 checked={isExistingCustomer}
                 onCheckedChange={(checked) => {
                   setIsExistingCustomer(checked as boolean)
-                  setSelectedCustomer(null)
+                  setSelectedCustomer(null);
+                  if (!checked) {
+                    reset({
+                      customer_name: "",
+                      customer_email: "",
+                      customer_phone: "",
+                    });
+                  }
                 }}
               />
               <Label htmlFor="existing-customer" className="text-sm font-medium">
