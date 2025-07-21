@@ -1,9 +1,45 @@
+import UseJobs from "@/app/hooks/UseJobs";
+import { useState } from "react";
+import agent from "@/app/api/agent";
+import { useAppDispatch } from "@/app/Store/configureStore";
+import { removeCustomer } from "./CustomerSlice";
+import CustomerList from "./CustomerList";
+import type { Customer } from "@/app/models/customer";
+import CustomerForm from "./CustomerForm";
+
 export default function CustomerPage() {
+    const { customers} = UseJobs();
+     const dispatch = useAppDispatch();
+    const [selectedCustomer, setSelectedCustomer] = useState<Customer | undefined>(undefined);
+    const [editMode, setEditMode] = useState(false);
+    const [target,setTarget] = useState(0);
+
+    function cancelEdit() {
+        if (selectedCustomer) setSelectedCustomer(undefined);
+        setEditMode(false);
+    }
+
+    function handleSelectCustomer(customer: Customer) {
+        setSelectedCustomer(customer);
+        setEditMode(true);
+    }
+
+    function handleDeleteCustomer(id: number) {
+        setTarget(id);
+        agent.Customer.deleteCustomer(id)
+            .then(() => {
+                // Dispatch an action to remove the customer from the store
+                dispatch(removeCustomer(id));
+            })
+            .catch(error => console.log(error));
+    }
+    if(editMode)return <CustomerForm customer={selectedCustomer} cancelEdit={cancelEdit} />
     return (
         <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">Customer Page</h1>
-        <p>This is the customer page of your application.</p>
-        <p>You can add more content here as needed.</p>
+            <CustomerList 
+                customers={customers} 
+                onSelectCustomer={handleSelectCustomer} 
+                onDeleteCustomer={handleDeleteCustomer}/>
         </div>
     );
 }

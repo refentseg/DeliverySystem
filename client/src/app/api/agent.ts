@@ -99,6 +99,9 @@ const Customer ={
 const Driver = {
     list: (params?: any) => request.get('/driver', params),
     details: (id: number) => request.get(`/driver/${id}`),
+    createDriver: (driver: any) => request.postForm('/driver/', createFormData(driver)),
+    updateDriver: (driver: any) => request.putForm(`/driver/${driver.id}/`, createFormData(driver)),
+    deleteDriver: (id: number) => request.delete(`/driver/${id}/`),
 }
 
 
