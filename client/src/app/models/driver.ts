@@ -3,5 +3,5 @@ export interface Driver {
   name: string;
   email: string;  
   phone: string;
-  licenseNumber: string;
+  license_number: string;
 }

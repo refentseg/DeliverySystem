@@ -11,7 +11,7 @@ class CustomerSerializer(serializers.ModelSerializer):
 class DriverSerializer(serializers.ModelSerializer):
     class Meta:
         model = Driver
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'email', 'phone', 'license_number']
 
 
 class JobSerializer(serializers.ModelSerializer):

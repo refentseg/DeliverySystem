@@ -6,6 +6,8 @@ import { removeCustomer } from "./CustomerSlice";
 import CustomerList from "./CustomerList";
 import type { Customer } from "@/app/models/customer";
 import CustomerForm from "./CustomerForm";
+import { Button } from "@/app/components/ui/button";
+import { Plus } from "lucide-react";
 
 export default function CustomerPage() {
     const { customers} = UseJobs();
@@ -36,6 +38,13 @@ export default function CustomerPage() {
     if(editMode)return <CustomerForm customer={selectedCustomer} cancelEdit={cancelEdit} />
     return (
         <div className="container mx-auto p-4">
+            <div className="flex items-center justify-between mb-6">
+                <div></div>
+                <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setEditMode(true)}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Customer
+                </Button>
+            </div>
             <CustomerList 
                 customers={customers} 
                 onSelectCustomer={handleSelectCustomer} 

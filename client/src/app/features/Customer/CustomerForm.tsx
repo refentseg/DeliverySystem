@@ -46,7 +46,7 @@ export default function CustomerForm({customer, cancelEdit}: Props) {
     }
 
     return(
-      <Card className="w-full max-w-md mx-auto">
+      <Card className="w-full max-w-md mx-auto mt-6">
       <CardHeader>
         <CardTitle>Customer Information</CardTitle>
         <CardDescription>Please fill out Customer Information.</CardDescription>
@@ -74,10 +74,10 @@ export default function CustomerForm({customer, cancelEdit}: Props) {
             </div>
             <div className="flex gap-3 pt-2">
                 <Button type="button" variant="outline" className="flex-1 bg-transparent"
-                onClick={cancelEdit}>
-                Cancel
-            </Button>
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                    onClick={cancelEdit}>
+                    Cancel
+                </Button>
+                <Button type="submit" className="flex-1" disabled={isSubmitting}>
                     {customer ? "Update Customer" : "Add Customer"}
                 </Button>
             </div>

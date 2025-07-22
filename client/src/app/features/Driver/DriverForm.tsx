@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
 import type { Driver } from "@/app/models/driver";
-import { register } from "module";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { driverSchema, type DriverFormData } from "./DriverSchema";
@@ -21,7 +20,7 @@ export default function DriverForm({driver, cancelEdit}: Props) {
             name: '',
             email: '',
             phone: '',
-            licenseNumber: ''
+            license_number: ''
         }
     });
 
@@ -44,7 +43,7 @@ export default function DriverForm({driver, cancelEdit}: Props) {
     }, [driver, isDirty, reset]); 
 
     return(
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-md mx-auto mt-6">
       <CardHeader>
         <CardTitle>Driver Information</CardTitle>
         <CardDescription>Please provide driver details and license information.</CardDescription>
@@ -96,10 +95,10 @@ export default function DriverForm({driver, cancelEdit}: Props) {
               id="license-number" 
               type="text" 
               placeholder="Enter driver's license number"
-              {...register('licenseNumber')}
+              {...register('license_number')}
             />
-            {errors.licenseNumber && (
-              <p className="text-sm text-red-600">{errors.licenseNumber.message}</p>
+            {errors.license_number && (
+              <p className="text-sm text-red-600">{errors.license_number.message}</p>
             )}
           </div>
 

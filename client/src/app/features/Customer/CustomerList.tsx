@@ -1,6 +1,5 @@
-import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/table";
 import type { Customer } from "@/app/models/customer";
-import { Table } from "lucide-react";
 
 interface Props {
   customers: Customer[];

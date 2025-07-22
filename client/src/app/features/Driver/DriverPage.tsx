@@ -6,6 +6,8 @@ import { useState } from "react";
 import { removeDriver } from "./DriverSlice";
 import DriverList from "./DriverList";
 import DriverForm from "./DriverForm";
+import { Button } from "@/app/components/ui/button";
+import { Plus } from "lucide-react";
 
 export default function DriverPage() {
   const { drivers } = UseJobs();
@@ -36,6 +38,14 @@ export default function DriverPage() {
   return (
     
     <div className="container mx-auto p-4">
+      <div className="flex items-center justify-between mb-6">
+                <div></div>
+          <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setEditMode(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Driver
+          </Button>
+      </div>
+        
       <DriverList drivers={drivers} onSelectDriver={handleSelectDriver} onDeleteDriver={handleDeleteDriver}/>
     </div>
   );

@@ -12,8 +12,11 @@ export const driverSchema = z.object({
   phone: z.string()
     .min(1, 'Phone is required')
     .min(10, 'Phone number must be at least 10 digits')
-    .regex(/^[\+]?[1-9][\d]{0,15}$/, 'Please enter a valid phone number'),
-  licenseNumber: z.string()
+    .regex(
+    /^(?:\+27|0)[6-8][0-9]{8}$/,
+    'Please enter a valid South African phone number'
+  ),
+  license_number: z.string()
     .min(1, 'License number is required')
     .min(5, 'License number must be at least 5 characters')
     .max(20, 'License number must be less than 20 characters')
