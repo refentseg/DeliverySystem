@@ -10,9 +10,9 @@ export const customerSchema = z.object({
     .min(1, 'Email is required')
     .email('Please enter a valid email address'),
   phone: z.string()
-    .min(1, 'Phone is required')
-    .min(10, 'Phone number must be at least 10 digits')
-    .regex(/^[\+]?[1-9][\d]{0,15}$/, 'Please enter a valid phone number')
+  .min(1, 'Phone is required')
+  .regex(/^(\+27|0)[0-9]{9}$/, 'Please enter a valid South African phone number')
+  .transform(val => val.startsWith('0') ? `+27${val.slice(1)}` : val)
 });
 
 export type CustomerFormData = z.infer<typeof customerSchema>
